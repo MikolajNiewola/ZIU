@@ -1,27 +1,44 @@
-import { useState } from 'react';
-import { useTodos } from '../context/TodoContext';
+import { useState } from "react";
 
-export function AddTodoForm() {
-  const [inputValue, setInputValue] = useState<string>('');
-  const { dispatch } = useTodos();
+interface TodoInputProps {
+  onAdd: (text: string) => void;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      dispatch({ type: 'ADD', payload: inputValue.trim() });
-      setInputValue('');
-    }
+export default function TodoInputTailwind({ onAdd }: TodoInputProps) {
+  const [text, setText] = useState("");
+
+  const handleSubmit = () => {
+    if (!text.trim()) return;
+    onAdd(text.trim());
+    setText("");
   };
 
   return (
-    <form className="add-todo-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="What needs to be done?"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <button type="submit">Add Task</button>
-    </form>
+    <div className="mb-6">
+      <h2 className="text-lg font-semibold text-gray-800 mb-2">
+        Dodaj nowe zadanie
+      </h2>
+
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Wpisz treść zadania..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg
+                    focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+        />
+
+        <button
+          onClick={handleSubmit}
+          disabled={!text.trim()}
+          className="px-5 py-2 text-sm font-semibold text-white bg-brand-500 rounded-lg
+                    hover:bg-brand-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Dodaj
+        </button>
+      </div>
+    </div>
   );
 }

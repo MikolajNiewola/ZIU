@@ -1,32 +1,67 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import type { Todo } from '../types/todo.types';
-import { TodoItem } from './TodoItem';
+import { type Todo } from "../types/todo.types";
 
 interface TodoListProps {
   todos: Todo[];
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function TodoList({ todos }: TodoListProps) {
+export default function TodoListTailwind({
+  todos,
+  onToggle,
+  onDelete,
+}: TodoListProps) {
   if (todos.length === 0) {
-    return <div className="empty-state">No tasks found. Enjoy your day!</div>;
+    return (
+      <p className="text-center text-gray-400 mt-8">
+        Brak zadań. Dodaj pierwsze!
+      </p>
+    );
   }
 
   return (
-    <ul className="todo-list">
-      <AnimatePresence mode="popLayout">
-        {todos.map((todo) => (
-          <motion.li
-            key={todo.id}
-            layout
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 50, scale: 0.95 }}
-            transition={{ duration: 0.2, type: 'spring', stiffness: 300, damping: 25 }}
+    <ul className="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {todos.map((todo) => (
+        <li
+          key={todo.id}
+          className={`flex items-center gap-3 px-4 py-3 ${todo.completed ? "bg-gray-50" : "bg-white"}`}
+        >
+          {/* TODO 6: Dodaj <input type='checkbox'> z klasami Tailwind */}
+          <input
+            type="checkbox"
+            checked={todo.completed}
+            onChange={() => onToggle(todo.id)}
+            className="w-5 h-5 rounded text-brand-500 focus:ring-2 focus:ring-brand-500 border-gray-300"
+          />
+          {/* TODO 7: Dodaj <span> z tekstem, przekreślonym gdy completed */}
+          <span
+            className={`flex-1 text-gray-700 ${todo.completed ? "line-through" : ""}`}
           >
-            <TodoItem todo={todo} />
-          </motion.li>
-        ))}
-      </AnimatePresence>
+            {todo.title}
+          </span>
+          {/* TODO 8: Dodaj przycisk usuwania po prawej stronie */}
+          <button
+            onClick={() => onDelete(todo.id)}
+            className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-200 hover:text-red-600 transition-colors"
+            aria-label="Usuń zadanie"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </li>
+      ))}
     </ul>
   );
 }
