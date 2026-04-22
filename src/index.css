@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .task-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .card-wrapper {
+    container-type: inline-size;
+  }
+
+  .task-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .task-card__thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  }
+
+  @container (min-width: 400px) {
+    .task-card {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .task-card__thumbnail {
+      width: 120px;
+      height: 100%;
+      aspect-ratio: auto; /* Reset na poziomych kartach */
+    }
+  }
+}

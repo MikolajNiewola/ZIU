@@ -28,13 +28,22 @@ const muiTheme = createTheme({
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
         h4: {
             fontWeight: 700,
-            letterSpacing: '-0.02em'
+            letterSpacing: '-0.02em',
+            fontSize: 'clamp(1.5rem, 4vw, 2.5rem)'
         },
         h5: {
-            fontWeight: 600
+            fontWeight: 600,
+            fontSize: 'clamp(1.25rem, 3vw, 2rem)'
         },
         h6: {
-            fontWeight: 600
+            fontWeight: 600,
+            fontSize: 'clamp(1rem, 2vw, 1.5rem)'
+        },
+        body1: {
+            fontSize: 'clamp(0.875rem, 1.5vw, 1.125rem)'
+        },
+        body2: {
+            fontSize: 'clamp(0.75rem, 1vw, 0.875rem)'
         },
         button: {
             textTransform: 'none',

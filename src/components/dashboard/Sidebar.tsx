@@ -14,7 +14,11 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import TaskIcon from "@mui/icons-material/Task";
 import SettingsIcon from "@mui/icons-material/Settings";
 
-const DRAWER_WIDTH = 240;
+interface SidebarProps {
+  mobileOpen: boolean;
+  handleDrawerToggle: () => void;
+  drawerWidth: number;
+}
 
 const navItems = [
   { label: "Dashboard", icon: DashboardIcon, path: "/" },
@@ -22,24 +26,9 @@ const navItems = [
   { label: "Ustawienia", icon: SettingsIcon, path: "/settings" },
 ];
 
-export default function Sidebar() {
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: DRAWER_WIDTH,
-
-        "& .MuiDrawer-paper": {
-          width: DRAWER_WIDTH,
-
-          boxSizing: "border-box",
-
-          bgcolor: "primary.main",
-
-          color: "white",
-        },
-      }}
-    >
+export default function Sidebar({ mobileOpen, handleDrawerToggle, drawerWidth }: SidebarProps) {
+  const drawerContent = (
+    <>
       <Toolbar>
         <Typography variant="h6" sx={{ fontWeight: 700 }}>
           TodoApp
@@ -65,9 +54,48 @@ export default function Sidebar() {
         <Avatar sx={{ width: 36, height: 36, bgcolor: "primary.dark" }}>
           U
         </Avatar>
-
         <Typography variant="body2">Użytkownik</Typography>
       </Box>
-    </Drawer>
+    </>
+  );
+
+  return (
+    <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Lepsza wydajność na mobile
+        }}
+        sx={{
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+            bgcolor: "primary.main",
+            color: "white",
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+      
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: "none", sm: "block" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+            bgcolor: "primary.main",
+            color: "white",
+          },
+        }}
+        open
+      >
+        {drawerContent}
+      </Drawer>
+    </Box>
   );
 }
