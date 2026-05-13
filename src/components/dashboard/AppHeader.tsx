@@ -23,7 +23,7 @@ export default function AppHeader({ handleDrawerToggle, drawerWidth }: AppHeader
       <Toolbar>
         <IconButton
           color="inherit"
-          aria-label="open drawer"
+          aria-label="Otwórz menu nawigacji"
           edge="start"
           onClick={handleDrawerToggle}
           sx={{ mr: 2, display: { sm: "none" } }}

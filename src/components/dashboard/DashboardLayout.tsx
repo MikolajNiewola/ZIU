@@ -21,19 +21,30 @@ export default function DashboardLayout({ children, onNavigate, activePage }: Da
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} drawerWidth={DRAWER_WIDTH} onNavigate={onNavigate} activePage={activePage} />
+      <Sidebar
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+        drawerWidth={DRAWER_WIDTH}
+        onNavigate={onNavigate}
+        activePage={activePage}
+      />
       <Box
         component="main"
-        sx={{ 
-          flexGrow: 1, 
-          p: 3, 
+        id="main-content"
+        tabIndex={-1}
+        sx={{
+          flexGrow: 1,
+          p: 3,
           bgcolor: "background.default",
-          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` }
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          outline: "none",
         }}
       >
         <AppHeader handleDrawerToggle={handleDrawerToggle} drawerWidth={DRAWER_WIDTH} />
         <Toolbar />
-        <StatsGrid />
+        <section aria-label="Statystyki zadań">
+          <StatsGrid />
+        </section>
         <Box sx={{ mt: 4 }}>
           {children}
         </Box>

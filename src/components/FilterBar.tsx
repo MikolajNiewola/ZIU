@@ -13,31 +13,52 @@ export function FilterBar({
   activeCount,
   totalCount,
 }: FilterBarProps) {
+  const completedCount = totalCount - activeCount;
+  const filterLabel =
+    activeFilter === "all"
+      ? `Wyświetlanie wszystkich ${totalCount} zadań`
+      : activeFilter === "active"
+        ? `Wyświetlanie ${activeCount} aktywnych zadań`
+        : `Wyświetlanie ${completedCount} ukończonych zadań`;
+
   return (
-    <div className="filter-bar">
+    <nav aria-label="Filtrowanie zadań" className="filter-bar">
       <div className="stats">
-        <span>{activeCount}</span> / {totalCount} active tasks
+        <span>{activeCount}</span> / {totalCount} aktywnych zadań
       </div>
-      <div className="filter-buttons">
+
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="visually-hidden"
+      >
+        {filterLabel}
+      </div>
+
+      <div className="filter-buttons" role="group" aria-label="Filtry zadań">
         <button
           className={`filter-btn ${activeFilter === "all" ? "active" : ""}`}
           onClick={() => onFilterChange("all")}
+          aria-pressed={activeFilter === "all"}
         >
-          All
+          Wszystkie
         </button>
         <button
           className={`filter-btn ${activeFilter === "active" ? "active" : ""}`}
           onClick={() => onFilterChange("active")}
+          aria-pressed={activeFilter === "active"}
         >
-          Active
+          Aktywne
         </button>
         <button
           className={`filter-btn ${activeFilter === "completed" ? "active" : ""}`}
           onClick={() => onFilterChange("completed")}
+          aria-pressed={activeFilter === "completed"}
         >
-          Completed
+          Ukończone
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

@@ -18,7 +18,7 @@ function App() {
   const filteredTodos = todos.filter((todo) => {
     if (filter === 'active') return !todo.completed;
     if (filter === 'completed') return todo.completed;
-    return true; // 'all'
+    return true;
   });
 
   const renderContent = () => {
@@ -28,28 +28,40 @@ function App() {
       case '/todos':
       default:
         return (
-          <div className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <section
+            aria-labelledby="todo-section-title"
+            className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          >
+            <h2 id="todo-section-title" className="visually-hidden">
+              Lista zadań
+            </h2>
             <AddTodoForm onAdd={(title) => dispatch({ type: 'ADD', payload: title })} />
-            <FilterBar 
-              activeFilter={filter} 
-              onFilterChange={setFilter} 
+            <FilterBar
+              activeFilter={filter}
+              onFilterChange={setFilter}
               activeCount={activeCount}
               totalCount={totalCount}
             />
-            <TodoList 
-              todos={filteredTodos} 
+            <TodoList
+              todos={filteredTodos}
               onToggle={(id) => dispatch({ type: 'TOGGLE', payload: id })}
               onDelete={(id) => dispatch({ type: 'DELETE', payload: id })}
             />
-          </div>
+          </section>
         );
     }
   };
 
   return (
-    <DashboardLayout onNavigate={setCurrentPage} activePage={currentPage}>
-      {renderContent()}
-    </DashboardLayout>
+    <>
+      {/* Skip navigation link (WCAG 2.4.1) */}
+      <a href="#main-content" className="skip-link">
+        Przejdź do treści głównej
+      </a>
+      <DashboardLayout onNavigate={setCurrentPage} activePage={currentPage}>
+        {renderContent()}
+      </DashboardLayout>
+    </>
   );
 }
 
