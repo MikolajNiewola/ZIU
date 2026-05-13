@@ -13,20 +13,30 @@ import {
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import TaskIcon from "@mui/icons-material/Task";
 import SettingsIcon from "@mui/icons-material/Settings";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 interface SidebarProps {
   mobileOpen: boolean;
   handleDrawerToggle: () => void;
   drawerWidth: number;
+  onNavigate?: (page: string) => void;
+  activePage?: string;
 }
 
 const navItems = [
   { label: "Dashboard", icon: DashboardIcon, path: "/" },
   { label: "Zadania", icon: TaskIcon, path: "/todos" },
+  { label: "Rejestracja", icon: PersonAddIcon, path: "/register" },
   { label: "Ustawienia", icon: SettingsIcon, path: "/settings" },
 ];
 
-export default function Sidebar({ mobileOpen, handleDrawerToggle, drawerWidth }: SidebarProps) {
+export default function Sidebar({
+  mobileOpen,
+  handleDrawerToggle,
+  drawerWidth,
+  onNavigate,
+  activePage,
+}: SidebarProps) {
   const drawerContent = (
     <>
       <Toolbar>
@@ -39,7 +49,15 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, drawerWidth }:
 
       <List>
         {navItems.map((item) => (
-          <ListItemButton key={item.path}>
+          <ListItemButton
+            key={item.path}
+            selected={activePage === item.path}
+            onClick={() => {
+              onNavigate?.(item.path);
+              handleDrawerToggle();
+            }}
+            sx={{ "&.Mui-selected": { bgcolor: "rgba(255,255,255,0.15)" } }}
+          >
             <ListItemIcon sx={{ color: "inherit" }}>
               <item.icon />
             </ListItemIcon>
@@ -60,13 +78,16 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, drawerWidth }:
   );
 
   return (
-    <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+    <Box
+      component="nav"
+      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+    >
       <Drawer
         variant="temporary"
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Lepsza wydajność na mobile
+          keepMounted: true,
         }}
         sx={{
           display: { xs: "block", sm: "none" },
@@ -80,7 +101,7 @@ export default function Sidebar({ mobileOpen, handleDrawerToggle, drawerWidth }:
       >
         {drawerContent}
       </Drawer>
-      
+
       <Drawer
         variant="permanent"
         sx={{

@@ -1,4 +1,4 @@
-import type { FilterType } from '../types/todo.types';
+import type { FilterType } from "../types/todo.types";
 
 interface FilterBarProps {
   activeFilter: FilterType;
@@ -7,7 +7,12 @@ interface FilterBarProps {
   totalCount: number;
 }
 
-export function FilterBar({ activeFilter, onFilterChange, activeCount, totalCount }: FilterBarProps) {
+export function FilterBar({
+  activeFilter,
+  onFilterChange,
+  activeCount,
+  totalCount,
+}: FilterBarProps) {
   return (
     <div className="filter-bar">
       <div className="stats">
@@ -15,20 +20,20 @@ export function FilterBar({ activeFilter, onFilterChange, activeCount, totalCoun
       </div>
       <div className="filter-buttons">
         <button
-          className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-          onClick={() => onFilterChange('all')}
+          className={`filter-btn ${activeFilter === "all" ? "active" : ""}`}
+          onClick={() => onFilterChange("all")}
         >
           All
         </button>
         <button
-          className={`filter-btn ${activeFilter === 'active' ? 'active' : ''}`}
-          onClick={() => onFilterChange('active')}
+          className={`filter-btn ${activeFilter === "active" ? "active" : ""}`}
+          onClick={() => onFilterChange("active")}
         >
           Active
         </button>
         <button
-          className={`filter-btn ${activeFilter === 'completed' ? 'active' : ''}`}
-          onClick={() => onFilterChange('completed')}
+          className={`filter-btn ${activeFilter === "completed" ? "active" : ""}`}
+          onClick={() => onFilterChange("completed")}
         >
           Completed
         </button>

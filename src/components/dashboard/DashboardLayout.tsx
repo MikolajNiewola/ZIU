@@ -6,7 +6,13 @@ import StatsGrid from "./StatsGrid";
 
 const DRAWER_WIDTH = 240;
 
-export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
+interface DashboardLayoutProps {
+  children?: React.ReactNode;
+  onNavigate?: (page: string) => void;
+  activePage?: string;
+}
+
+export default function DashboardLayout({ children, onNavigate, activePage }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -15,7 +21,7 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} drawerWidth={DRAWER_WIDTH} />
+      <Sidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} drawerWidth={DRAWER_WIDTH} onNavigate={onNavigate} activePage={activePage} />
       <Box
         component="main"
         sx={{ 
