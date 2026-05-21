@@ -1,67 +1,284 @@
-import { useState } from 'react';
-import { useTodos } from './context/TodoContext';
-import type { FilterType } from './types/todo.types';
-import AddTodoForm from './components/AddTodoForm';
-import { FilterBar } from './components/FilterBar';
-import TodoList from './components/TodoList';
-import DashboardLayout from './components/dashboard/DashboardLayout';
-import MultiStepForm from './components/form/MultiStepForm';
+import { useState, useEffect } from "react";
+import "./App.css";
+import { useCharacters } from "./hooks/useCharacters";
+import { useFetchMovies } from "./hooks/useFetchMovies";
+import { useDebounce } from "./hooks/useDebounce";
+import { useFavorites } from "./hooks/useFavorites";
+import { useFetchGenres } from "./hooks/useFetchGenres";
+import { MovieCard } from "./components/MovieCard";
+import { MovieModal } from "./components/MovieModal";
+import { SkeletonCard } from "./components/SkeletonCard";
+import { ErrorBanner } from "./components/ErrorBanner";
+import { EmptyState } from "./components/EmptyState";
 
 function App() {
-  const { todos, dispatch } = useTodos();
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [currentPage, setCurrentPage] = useState('/');
+  const [activeTab, setActiveTab] = useState<'movies' | 'characters'>('movies');
 
-  const activeCount = todos.filter((t) => !t.completed).length;
-  const totalCount = todos.length;
+  const [rmPage, setRmPage] = useState(1);
+  const {
+    data: rmData,
+    isLoading: isRMLoading,
+    error: rmError,
+    isFetching: isRMFetching,
+  } = useCharacters(rmPage);
 
-  const filteredTodos = todos.filter((todo) => {
-    if (filter === 'active') return !todo.completed;
-    if (filter === 'completed') return todo.completed;
-    return true;
-  });
+  const [moviePage, setMoviePage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
 
-  const renderContent = () => {
-    switch (currentPage) {
-      case '/register':
-        return <MultiStepForm />;
-      case '/todos':
-      default:
-        return (
-          <section
-            aria-labelledby="todo-section-title"
-            className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100"
-          >
-            <h2 id="todo-section-title" className="visually-hidden">
-              Lista zadań
-            </h2>
-            <AddTodoForm onAdd={(title) => dispatch({ type: 'ADD', payload: title })} />
-            <FilterBar
-              activeFilter={filter}
-              onFilterChange={setFilter}
-              activeCount={activeCount}
-              totalCount={totalCount}
-            />
-            <TodoList
-              todos={filteredTodos}
-              onToggle={(id) => dispatch({ type: 'TOGGLE', payload: id })}
-              onDelete={(id) => dispatch({ type: 'DELETE', payload: id })}
-            />
-          </section>
-        );
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
+  const {
+    data: movieData,
+    isLoading: isMoviesLoading,
+    error: moviesError,
+    isFetching: isMoviesFetching,
+    isPlaceholderData: isMoviesPlaceholder,
+    refetch: refetchMovies,
+  } = useFetchMovies(moviePage, debouncedQuery, selectedGenre);
+
+  const { data: genresList } = useFetchGenres();
+  const { favorites } = useFavorites();
+
+  useEffect(() => {
+    setMoviePage(1);
+  }, [debouncedQuery, selectedGenre]);
+
+  useEffect(() => {
+    if (showFavoritesOnly) {
+      setSearchQuery('');
+      setSelectedGenre(null);
     }
-  };
+  }, [showFavoritesOnly]);
 
   return (
-    <>
-      {/* Skip navigation link (WCAG 2.4.1) */}
-      <a href="#main-content" className="skip-link">
-        Przejdź do treści głównej
-      </a>
-      <DashboardLayout onNavigate={setCurrentPage} activePage={currentPage}>
-        {renderContent()}
-      </DashboardLayout>
-    </>
+    <div className="app-container">
+      <header className="app-header">
+        <div className="header-logo">
+          <h1>Movie Browser</h1>
+        </div>
+        <nav className="tab-navigation">
+          <button
+            className={`tab-btn ${activeTab === 'movies' ? 'active' : ''}`}
+            onClick={() => setActiveTab('movies')}
+          >
+            Przeglądarka Filmów (TMDB)
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'characters' ? 'active' : ''}`}
+            onClick={() => setActiveTab('characters')}
+          >
+            Postacie Rick & Morty
+          </button>
+        </nav>
+      </header>
+
+      {activeTab === 'movies' && (
+        <main className="tab-content">
+          <div className="filter-bar">
+            <div className="search-wrapper">
+              <input
+                type="text"
+                placeholder="Wyszukaj film (wpisz min. 2 znaki)..."
+                value={searchQuery}
+                disabled={showFavoritesOnly}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="clear-search"
+                  onClick={() => setSearchQuery('')}
+                  disabled={showFavoritesOnly}
+                >
+                  &times;
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+              className={`favorites-toggle-btn ${showFavoritesOnly ? 'active' : ''}`}
+            >
+              {showFavoritesOnly ? '❤️ Pokaż wszystkie' : '🤍 Tylko ulubione'}
+              <span className="fav-count"> ({favorites.length})</span>
+            </button>
+          </div>
+
+          {!showFavoritesOnly && !searchQuery && genresList && genresList.length > 0 && (
+            <div className="genre-filter-container">
+              <span className="genre-label">Gatunek:</span>
+              <div className="genre-badges-grid">
+                <button
+                  className={`genre-badge-btn ${selectedGenre === null ? 'active' : ''}`}
+                  onClick={() => setSelectedGenre(null)}
+                >
+                  Wszystkie
+                </button>
+                {genresList.map((genre) => (
+                  <button
+                    key={genre.id}
+                    className={`genre-badge-btn ${selectedGenre === genre.id ? 'active' : ''}`}
+                    onClick={() => setSelectedGenre(selectedGenre === genre.id ? null : genre.id)}
+                  >
+                    {genre.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="content-area">
+            {showFavoritesOnly ? (
+              favorites.length === 0 ? (
+                <EmptyState message="Brak ulubionych filmów. Dodaj filmy do ulubionych klikając ikonę serduszka na kartach filmów!" />
+              ) : (
+                <div className="movie-grid">
+                  {favorites.map((movie) => (
+                    <MovieCard
+                      key={movie.id}
+                      movie={movie}
+                      onSelect={setSelectedMovieId}
+                    />
+                  ))}
+                </div>
+              )
+            ) : (
+              <>
+                {isMoviesLoading && (
+                  <div className="movie-grid">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <SkeletonCard key={`skeleton-${i}`} />
+                    ))}
+                  </div>
+                )}
+
+                {moviesError && (
+                  <ErrorBanner
+                    message={moviesError.message}
+                    onRetry={() => refetchMovies()}
+                  />
+                )}
+
+                {!isMoviesLoading && !moviesError && movieData?.results.length === 0 && (
+                  <EmptyState />
+                )}
+
+                {!isMoviesLoading && !moviesError && movieData && movieData.results.length > 0 && (
+                  <div
+                    className="movie-grid"
+                    style={{
+                      opacity: isMoviesPlaceholder ? 0.5 : 1,
+                      transition: "opacity 0.2s ease-in-out",
+                    }}
+                  >
+                    {movieData.results.map((movie) => (
+                      <MovieCard
+                        key={movie.id}
+                        movie={movie}
+                        onSelect={setSelectedMovieId}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {!isMoviesLoading && !moviesError && movieData && movieData.results.length > 0 && (
+                  <div className="pagination-container">
+                    <button
+                      className="pagination-button"
+                      disabled={moviePage <= 1 || isMoviesFetching}
+                      onClick={() => setMoviePage((prev) => Math.max(prev - 1, 1))}
+                    >
+                      &larr; Poprzednia
+                    </button>
+                    <span className="pagination-text">
+                      {isMoviesFetching ? "Wczytywanie..." : `Strona ${moviePage} z ${movieData.total_pages}`}
+                    </span>
+                    <button
+                      className="pagination-button"
+                      disabled={moviePage >= movieData.total_pages || isMoviesFetching}
+                      onClick={() => setMoviePage((prev) => prev + 1)}
+                    >
+                      Następna &rarr;
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          <MovieModal
+            movieId={selectedMovieId}
+            onClose={() => setSelectedMovieId(null)}
+          />
+        </main>
+      )}
+
+      {activeTab === 'characters' && (
+        <main className="tab-content">
+          <div className="content-area">
+            {isRMLoading && (
+              <div className="movie-grid">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <SkeletonCard key={`rm-skeleton-${i}`} />
+                ))}
+              </div>
+            )}
+
+            {rmError && (
+              <div className="error-banner">
+                <h3>Błąd podczas wczytywania postaci</h3>
+                <p>{rmError.message}</p>
+              </div>
+            )}
+
+            {!isRMLoading && !rmError && rmData && (
+              <>
+                <div
+                  className="characters-grid"
+                  style={{
+                    opacity: isRMFetching ? 0.6 : 1,
+                    transition: "opacity 0.2s ease-in-out",
+                  }}
+                >
+                  {rmData.results.map((character) => (
+                    <div key={character.id} className="character-card">
+                      <img src={character.image} alt={character.name} />
+                      <div className="character-info">
+                        <h3>{character.name}</h3>
+                        <p>{character.species} • {character.status}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pagination-container">
+                  <button
+                    className="pagination-button"
+                    disabled={rmPage <= 1 || isRMFetching}
+                    onClick={() => setRmPage((prev) => Math.max(prev - 1, 1))}
+                  >
+                    &larr; Poprzednia
+                  </button>
+                  <span className="pagination-text">
+                    {isRMFetching ? "Wczytywanie..." : `Strona ${rmPage} z ${rmData.info.pages}`}
+                  </span>
+                  <button
+                    className="pagination-button"
+                    disabled={rmPage >= rmData.info.pages || isRMFetching}
+                    onClick={() => setRmPage((prev) => prev + 1)}
+                  >
+                    Następna &rarr;
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </main>
+      )}
+    </div>
   );
 }
 

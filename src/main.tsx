@@ -1,18 +1,35 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import muiTheme from './theme/muiTheme.ts';
-import { TodoProvider } from './context/TodoContext.tsx';
+import "./index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ThemeProvider theme={muiTheme}>
-      <CssBaseline />
-      <TodoProvider>
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minut — dane 'świeże'
+      retry: 2, // 2 ponowne próby przy błędzie
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+async function enableMocking() {
+  if (import.meta.env.DEV) {
+    const { worker } = await import("./mocks/browser");
+    return worker.start({ onUnhandledRequest: "bypass" });
+  }
+}
+
+enableMocking().then(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
         <App />
-      </TodoProvider>
-    </ThemeProvider>
-  </React.StrictMode>,
-);
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+});
+
