@@ -6,14 +6,23 @@ const TMDB_BASE = 'https://api.themoviedb.org/3';
 export const handlers = [
   // Mock listy popularnych filmów
   http.get(`${TMDB_BASE}/movie/popular`, async ({ request }) => {
-    await delay(800); // symuluj opóźnienie sieci
-
     const url = new URL(request.url);
+
+    // Tylko do ręcznego testu ErrorBanner: /movie/popular?testAuthError=1
+    if (url.searchParams.get('testAuthError') === '1') {
+      return HttpResponse.json(
+        { status_message: 'Invalid API key.' },
+        { status: 401 },
+      );
+    }
+
+    await delay(800); // symuluj opóźnienie sieci
     const page = Number(url.searchParams.get('page') ?? 1);
 
     return HttpResponse.json({
       page,
       total_pages: 10,
+      total_results: 200,
       results: Array.from({ length: 20 }, (_, i) => ({
         id: page * 100 + i,
         title: `Film testowy ${page}-${i + 1}`,
@@ -22,6 +31,28 @@ export const handlers = [
         release_date: '2024-01-01',
         vote_average: 7.5,
         genre_ids: [28, 12],
+      })),
+    });
+  }),
+
+  http.get(`${TMDB_BASE}/discover/movie`, async ({ request }) => {
+    await delay(600);
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get('page') ?? 1);
+    const genreId = url.searchParams.get('with_genres') ?? '';
+
+    return HttpResponse.json({
+      page,
+      total_pages: 5,
+      total_results: 100,
+      results: Array.from({ length: 20 }, (_, i) => ({
+        id: page * 200 + Number(genreId) + i,
+        title: `Film gatunku ${genreId} — ${i + 1}`,
+        overview: 'Opis z discover.',
+        poster_path: null,
+        release_date: '2024-01-01',
+        vote_average: 7.0,
+        genre_ids: [Number(genreId)],
       })),
     });
   }),
@@ -74,13 +105,5 @@ export const handlers = [
       budget: 50_000_000,
       revenue: 200_000_000,
     });
-  }),
-
-  // Mock błędu autoryzacji — do testowania ErrorBanner
-  http.get(`${TMDB_BASE}/movie/popular`, () => {
-    return HttpResponse.json(
-      { status_message: 'Invalid API key.' },
-      { status: 401 }
-    );
   }),
 ];

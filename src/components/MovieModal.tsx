@@ -58,11 +58,11 @@ export function MovieModal({ movieId, onClose }: Props) {
             <div className="modal-poster-side">
               <img src={posterUrl} alt={movie.title} />
             </div>
-            
+
             <div className="modal-info-side">
               <h2 className="modal-title">{movie.title}</h2>
               {movie.tagline && <p className="modal-tagline">„{movie.tagline}”</p>}
-              
+
               <div className="modal-metadata">
                 <span className="meta-item">📅 {movie.release_date ? movie.release_date : 'B.D.'}</span>
                 {movie.runtime && <span className="meta-item">⏱️ {movie.runtime} min</span>}

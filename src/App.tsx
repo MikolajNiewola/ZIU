@@ -33,11 +33,16 @@ function App() {
   const {
     data: movieData,
     isLoading: isMoviesLoading,
+    isSuccess: isMoviesSuccess,
+    isFetched: isMoviesFetched,
     error: moviesError,
     isFetching: isMoviesFetching,
     isPlaceholderData: isMoviesPlaceholder,
     refetch: refetchMovies,
   } = useFetchMovies(moviePage, debouncedQuery, selectedGenre);
+
+  const searchTooShort =
+    debouncedQuery.trim().length > 0 && debouncedQuery.trim().length < 2;
 
   const { data: genresList } = useFetchGenres();
   const { favorites } = useFavorites();
@@ -79,8 +84,12 @@ function App() {
         <main className="tab-content">
           <div className="filter-bar">
             <div className="search-wrapper">
+              <label htmlFor="search-input" className="visually-hidden">
+                Wyszukaj film
+              </label>
               <input
-                type="text"
+                id="search-input"
+                type="search"
                 placeholder="Wyszukaj film (wpisz min. 2 znaki)..."
                 value={searchQuery}
                 disabled={showFavoritesOnly}
@@ -89,9 +98,11 @@ function App() {
               />
               {searchQuery && (
                 <button
+                  type="button"
                   className="clear-search"
                   onClick={() => setSearchQuery('')}
                   disabled={showFavoritesOnly}
+                  aria-label="Wyczyść wyszukiwanie"
                 >
                   &times;
                 </button>
@@ -162,11 +173,17 @@ function App() {
                   />
                 )}
 
-                {!isMoviesLoading && !moviesError && movieData?.results.length === 0 && (
-                  <EmptyState />
+                {searchTooShort && (
+                  <EmptyState message="Wpisz co najmniej 2 znaki, aby wyszukać film." />
                 )}
 
-                {!isMoviesLoading && !moviesError && movieData && movieData.results.length > 0 && (
+                {!searchTooShort &&
+                  isMoviesFetched &&
+                  !moviesError &&
+                  isMoviesSuccess &&
+                  (movieData?.results?.length ?? 0) === 0 && <EmptyState />}
+
+                {!isMoviesLoading && !moviesError && (movieData?.results?.length ?? 0) > 0 && (
                   <div
                     className="movie-grid"
                     style={{
@@ -174,7 +191,7 @@ function App() {
                       transition: "opacity 0.2s ease-in-out",
                     }}
                   >
-                    {movieData.results.map((movie) => (
+                    {movieData?.results?.map((movie) => (
                       <MovieCard
                         key={movie.id}
                         movie={movie}
@@ -184,7 +201,7 @@ function App() {
                   </div>
                 )}
 
-                {!isMoviesLoading && !moviesError && movieData && movieData.results.length > 0 && (
+                {!isMoviesLoading && !moviesError && (movieData?.results?.length ?? 0) > 0 && (
                   <div className="pagination-container">
                     <button
                       className="pagination-button"

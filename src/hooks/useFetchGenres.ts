@@ -17,6 +17,9 @@ export function useFetchGenres() {
     queryKey: QUERY_KEYS.genres.all(),
     queryFn: async () => {
       const { data } = await tmdbClient.get<GenresResponse>(TMDB_ENDPOINTS.genreList);
+      if (!data?.genres) {
+        throw new Error('Nie udało się wczytać listy gatunków.');
+      }
       return data.genres;
     },
     staleTime: 1000 * 60 * 60,
