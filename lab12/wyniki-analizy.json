@@ -1,0 +1,94 @@
+{
+  "rowCount": 712,
+  "bounceRateByPage": [
+    {
+      "page": "home",
+      "bounceRate": "79.4%",
+      "bounceRateNum": 79.43037974683544,
+      "total": 316,
+      "bounced": 251
+    },
+    {
+      "page": "about",
+      "bounceRate": "61.6%",
+      "bounceRateNum": 61.6,
+      "total": 125,
+      "bounced": 77
+    },
+    {
+      "page": "confirm",
+      "bounceRate": "24.8%",
+      "bounceRateNum": 24.8,
+      "total": 125,
+      "bounced": 31
+    },
+    {
+      "page": "form",
+      "bounceRate": "21.2%",
+      "bounceRateNum": 21.232876712328768,
+      "total": 146,
+      "bounced": 31
+    }
+  ],
+  "highestBouncePage": "home",
+  "formDropOff": {
+    "Krok 1": "100.0% (135/135)",
+    "Krok 2": "65.9% (89/135)",
+    "Krok 3": "37.0% (50/135)",
+    "Krok 4": "20.0% (27/135)"
+  },
+  "formDropOffSteps": [
+    {
+      "step": 1,
+      "reached": 135,
+      "total": 135,
+      "percentage": 100
+    },
+    {
+      "step": 2,
+      "reached": 89,
+      "total": 135,
+      "percentage": 65.92592592592592
+    },
+    {
+      "step": 3,
+      "reached": 50,
+      "total": 135,
+      "percentage": 37.03703703703704
+    },
+    {
+      "step": 4,
+      "reached": 27,
+      "total": 135,
+      "percentage": 20
+    }
+  ],
+  "largestFormDropOff": {
+    "from": 1,
+    "to": 2,
+    "dropPp": 34.074074074074076
+  },
+  "topClicks": [
+    {
+      "element": "logo",
+      "count": 85
+    },
+    {
+      "element": "form_next_btn",
+      "count": 52
+    },
+    {
+      "element": "nav_about",
+      "count": 46
+    },
+    {
+      "element": "scroll_banner",
+      "count": 45
+    },
+    {
+      "element": "nav_form",
+      "count": 37
+    }
+  ],
+  "generatedAt": "2026-06-15T12:56:11.411Z"
+}

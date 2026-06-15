@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { NavLink, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import "./App.css";
 import { useCharacters } from "./hooks/useCharacters";
 import { useFetchMovies } from "./hooks/useFetchMovies";
@@ -8,6 +9,12 @@ import { useFavorites } from "./hooks/useFavorites";
 import { useFetchGenres } from "./hooks/useFetchGenres";
 import { useToast } from "./hooks/useToast";
 import { createPageVariants } from "./animations/variants";
+import {
+  trackPageview,
+  trackCtaClick,
+  trackFormAbandon,
+  trackFormSubmit,
+} from "./analytics/plausible";
 import { MovieModal } from "./components/MovieModal";
 import { SkeletonCard } from "./components/SkeletonCard";
 import { ErrorBanner } from "./components/ErrorBanner";
@@ -17,9 +24,10 @@ import { FavoritesReorderList } from "./components/FavoritesReorderList";
 import { ToastContainer } from "./components/ToastContainer";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'movies' | 'characters'>('movies');
+  const location = useLocation();
   const shouldReduce = useReducedMotion();
   const pageVariants = createPageVariants(!!shouldReduce);
+  const lastSearchTracked = useRef("");
 
   const [rmPage, setRmPage] = useState(1);
   const {
@@ -62,6 +70,40 @@ function App() {
   };
 
   useEffect(() => {
+    trackPageview(location.pathname);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const query = debouncedQuery.trim();
+    if (query.length >= 2 && query !== lastSearchTracked.current) {
+      trackFormSubmit('search');
+      lastSearchTracked.current = query;
+    }
+  }, [debouncedQuery]);
+
+  const handleSelectMovie = useCallback((id: number) => {
+    trackCtaClick('movie_modal');
+    setSelectedMovieId(id);
+  }, []);
+
+  const handleFavoriteToast = useCallback(
+    (message: string) => {
+      if (message.startsWith('Dodano')) {
+        trackFormSubmit('favorite_add');
+      }
+      addToast(message);
+    },
+    [addToast],
+  );
+
+  const handleSearchBlur = () => {
+    const len = searchQuery.trim().length;
+    if (len > 0 && len < 2) {
+      trackFormAbandon('search');
+    }
+  };
+
+  useEffect(() => {
     setMoviePage(1);
   }, [debouncedQuery, selectedGenre]);
 
@@ -79,31 +121,35 @@ function App() {
           <h1>Movie Browser</h1>
         </div>
         <nav className="tab-navigation">
-          <button
-            className={`tab-btn ${activeTab === 'movies' ? 'active' : ''}`}
-            onClick={() => setActiveTab('movies')}
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `tab-btn ${isActive ? 'active' : ''}`}
           >
             Przeglądarka Filmów (TMDB)
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'characters' ? 'active' : ''}`}
-            onClick={() => setActiveTab('characters')}
+          </NavLink>
+          <NavLink
+            to="/characters"
+            className={({ isActive }) => `tab-btn ${isActive ? 'active' : ''}`}
           >
             Postacie Rick & Morty
-          </button>
+          </NavLink>
         </nav>
       </header>
 
       <AnimatePresence mode="wait">
-        {activeTab === 'movies' && (
-          <motion.main
-            key="movies"
-            className="tab-content"
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
+        <Routes location={location} key={location.pathname}>
+          <Route
+            path="/"
+            element={
+              <motion.main
+                key="movies"
+                className="tab-content"
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
             <div className="filter-bar">
               <div className="search-wrapper">
                 <label htmlFor="search-input" className="visually-hidden">
@@ -116,6 +162,7 @@ function App() {
                   value={searchQuery}
                   disabled={showFavoritesOnly}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={handleSearchBlur}
                   className="search-input"
                 />
                 {searchQuery && (
@@ -132,7 +179,10 @@ function App() {
               </div>
 
               <button
-                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                onClick={() => {
+                  trackCtaClick('favorites_toggle');
+                  setShowFavoritesOnly(!showFavoritesOnly);
+                }}
                 className={`favorites-toggle-btn ${showFavoritesOnly ? 'active' : ''}`}
               >
                 {showFavoritesOnly ? '❤️ Pokaż wszystkie' : '🤍 Tylko ulubione'}
@@ -171,8 +221,8 @@ function App() {
                   <FavoritesReorderList
                     favorites={favorites}
                     onReorder={reorderFavorites}
-                    onSelect={setSelectedMovieId}
-                    onFavoriteToggle={addToast}
+                    onSelect={handleSelectMovie}
+                    onFavoriteToggle={handleFavoriteToast}
                   />
                 )
               ) : (
@@ -208,8 +258,8 @@ function App() {
                       <AnimatedMovieGrid
                         movies={movieData!.results}
                         listKey={movieListKey}
-                        onSelect={setSelectedMovieId}
-                        onFavoriteToggle={addToast}
+                        onSelect={handleSelectMovie}
+                        onFavoriteToggle={handleFavoriteToast}
                         style={{
                           opacity: isMoviesPlaceholder ? 0.5 : 1,
                           transition: 'opacity 0.2s ease-in-out',
@@ -258,18 +308,20 @@ function App() {
               movieId={selectedMovieId}
               onClose={() => setSelectedMovieId(null)}
             />
-          </motion.main>
-        )}
-
-        {activeTab === 'characters' && (
-          <motion.main
-            key="characters"
-            className="tab-content"
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
+              </motion.main>
+            }
+          />
+          <Route
+            path="/characters"
+            element={
+              <motion.main
+                key="characters"
+                className="tab-content"
+                variants={pageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
             <div className="content-area">
               {isRMLoading && (
                 <div className="movie-grid">
@@ -338,8 +390,11 @@ function App() {
                 </>
               )}
             </div>
-          </motion.main>
-        )}
+              </motion.main>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AnimatePresence>
 
       <ToastContainer toasts={toasts} />
