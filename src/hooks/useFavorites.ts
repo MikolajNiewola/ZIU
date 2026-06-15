@@ -32,5 +32,10 @@ export function useFavorites() {
     [favorites]
   );
 
-  return { favorites, toggleFavorite, isFavorite };
+  const reorderFavorites = useCallback((next: Movie[]) => {
+    setFavorites(next);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  }, []);
+
+  return { favorites, toggleFavorite, isFavorite, reorderFavorites };
 }

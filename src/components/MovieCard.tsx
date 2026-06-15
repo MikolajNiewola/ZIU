@@ -8,9 +8,10 @@ const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
 interface Props {
   movie: Movie;
   onSelect?: (id: number) => void;
+  onFavoriteToggle?: (message: string) => void;
 }
 
-export function MovieCard({ movie, onSelect }: Props) {
+export function MovieCard({ movie, onSelect, onFavoriteToggle }: Props) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [optimisticFav, setOptimisticFav] = useState<boolean | null>(null);
 
@@ -23,6 +24,9 @@ export function MovieCard({ movie, onSelect }: Props) {
     try {
       // 2. Wykonaj faktyczną operację
       await toggleFavorite(movie);
+      onFavoriteToggle?.(
+        displayedFav ? 'Usunięto z ulubionych' : 'Dodano do ulubionych',
+      );
 
       // 3. Wyczyść stan optimistic — rzeczywisty stan zsynchronizowany
       setOptimisticFav(null);
@@ -30,7 +34,7 @@ export function MovieCard({ movie, onSelect }: Props) {
       // 4. Rollback przy błędzie
       setOptimisticFav(null);
     }
-  }, [displayedFav, toggleFavorite, movie]);
+  }, [displayedFav, toggleFavorite, movie, onFavoriteToggle]);
 
   return (
     <div
