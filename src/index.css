@@ -115,7 +115,12 @@
   top: 0;
 }
 
-*:focus-visible {
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible:not([tabindex="-1"]) {
   outline: 2px solid #1565C0;
   outline-offset: 2px;
 }

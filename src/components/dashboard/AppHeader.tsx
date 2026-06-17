@@ -1,8 +1,5 @@
-import { AppBar, Toolbar, Typography, IconButton, Badge, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import LightModeIcon from "@mui/icons-material/LightMode";
-
 interface AppHeaderProps {
   handleDrawerToggle: () => void;
   drawerWidth: number;

@@ -65,19 +65,18 @@ export default function AddTodoForm({ onAdd, isLoading }: AddTodoFormProps) {
           )}
         </div>
 
-        <motion.div whileTap={tapScale}>
-          <button
-            type="submit"
-            disabled={busy}
-            aria-label="Dodaj zadanie"
-            aria-busy={busy}
-            className="px-5 py-2 text-sm font-semibold text-white bg-brand-500 rounded-lg
-                      hover:bg-brand-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed
-                      focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-          >
-            {busy ? 'Dodawanie…' : 'Dodaj'}
-          </button>
-        </motion.div>
+        <motion.button
+          type="submit"
+          whileTap={busy ? undefined : tapScale}
+          disabled={busy}
+          aria-label="Dodaj zadanie"
+          aria-busy={busy}
+          className="px-5 py-2 text-sm font-semibold text-white bg-brand-500 rounded-lg
+                    hover:bg-brand-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+        >
+          {busy ? 'Dodawanie…' : 'Dodaj'}
+        </motion.button>
       </div>
     </form>
   );

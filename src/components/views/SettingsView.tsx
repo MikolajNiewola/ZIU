@@ -15,13 +15,17 @@ import {
 } from '@mui/material';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import BugReportIcon from '@mui/icons-material/BugReport';
-import { motion } from 'framer-motion';
 import { useTodos } from '../../hooks/useTodos';
 import {
   isSimulateErrorEnabled,
   setSimulateError,
 } from '../../mocks/data';
-import { tapScale } from '../../animations/variants';
+
+const tapButtonSx = {
+  '&:active': { transform: 'scale(0.97)' },
+  transition: 'transform 0.15s ease',
+  alignSelf: 'flex-start',
+};
 
 export default function SettingsView() {
   const { clearAllTodos, todos, status } = useTodos();
@@ -78,17 +82,16 @@ export default function SettingsView() {
           Liczba zadań w bazie: <strong>{todos.length}</strong>
         </Typography>
 
-        <motion.div whileTap={tapScale}>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<DeleteSweepIcon />}
-            onClick={() => setConfirmOpen(true)}
-            disabled={todos.length === 0 || status === 'loading'}
-          >
-            Wyczyść wszystkie zadania
-          </Button>
-        </motion.div>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<DeleteSweepIcon />}
+          onClick={() => setConfirmOpen(true)}
+          disabled={todos.length === 0 || status === 'loading'}
+          sx={tapButtonSx}
+        >
+          Wyczyść wszystkie zadania
+        </Button>
       </Box>
 
       <Dialog

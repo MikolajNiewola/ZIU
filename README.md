@@ -4,7 +4,7 @@ Aplikacja To-Do stworzona na potrzeby laboratorium z przedmiotu **Zaawansowany i
 
 Nowoczesna aplikacja webowa do zarządzania zadaniami z panelem dashboard, formularzem rejestracji wieloetapowej, mock API (MSW) oraz pełną obsługą stanów asynchronicznych.
 
-**Demo:** _(wstaw link po wdrożeniu na Vercel/Netlify)_
+**Demo:** _(https://mellifluous-gingersnap-cad6a0.netlify.app/)_
 
 ## Funkcjonalności
 
@@ -35,16 +35,6 @@ Aplikacja uruchomi się pod adresem `http://localhost:5173`.
 npm run build
 npm run preview
 ```
-
-## Wdrożenie (Vercel / Netlify)
-
-1. Zbuduj projekt: `npm run build`
-2. Folder do wdrożenia: `dist/`
-3. **Vercel:** połącz repozytorium GitHub → framework: Vite → build: `npm run build` → output: `dist`
-4. **Netlify:** przeciągnij folder `dist` na [app.netlify.com/drop](https://app.netlify.com/drop) lub skonfiguruj build command i publish directory
-5. Upewnij się, że plik `mockServiceWorker.js` jest w katalogu publicznym (MSW działa także po buildzie)
-
-Po wdrożeniu wklej link do demo w tym README.
 
 ## Technologie
 

@@ -1,9 +1,12 @@
 import { Box, Typography, Button, Paper, List, ListItem, ListItemText } from '@mui/material';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { motion } from 'framer-motion';
 import { useTodos } from '../../hooks/useTodos';
-import { tapScale } from '../../animations/variants';
+
+const tapButtonSx = {
+  '&:active': { transform: 'scale(0.97)' },
+  transition: 'transform 0.15s ease',
+};
 
 interface DashboardViewProps {
   onNavigate: (page: string) => void;
@@ -12,7 +15,6 @@ interface DashboardViewProps {
 export default function DashboardView({ onNavigate }: DashboardViewProps) {
   const { todos } = useTodos();
   const recentTodos = todos.slice(0, 5);
-  const completedCount = todos.filter((t) => t.completed).length;
 
   return (
     <Paper
@@ -23,29 +25,26 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
         Witaj w TodoApp
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        Masz {todos.length} zadań, z czego {completedCount} ukończonych.
         Zarządzaj zadaniami, filtruj listę i rejestruj konto w aplikacji.
       </Typography>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4 }}>
-        <motion.div whileTap={tapScale}>
-          <Button
-            variant="contained"
-            startIcon={<TaskAltIcon />}
-            onClick={() => onNavigate('/todos')}
-          >
-            Przejdź do zadań
-          </Button>
-        </motion.div>
-        <motion.div whileTap={tapScale}>
-          <Button
-            variant="outlined"
-            startIcon={<PersonAddIcon />}
-            onClick={() => onNavigate('/register')}
-          >
-            Rejestracja
-          </Button>
-        </motion.div>
+        <Button
+          variant="contained"
+          startIcon={<TaskAltIcon />}
+          onClick={() => onNavigate('/todos')}
+          sx={tapButtonSx}
+        >
+          Przejdź do zadań
+        </Button>
+        <Button
+          variant="outlined"
+          startIcon={<PersonAddIcon />}
+          onClick={() => onNavigate('/register')}
+          sx={tapButtonSx}
+        >
+          Rejestracja
+        </Button>
       </Box>
 
       {recentTodos.length > 0 && (
