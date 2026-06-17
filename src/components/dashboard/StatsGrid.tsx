@@ -3,7 +3,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import StatsCard from "./StatsCard";
-import { useTodos } from "../../context/TodoContext";
+import { useTodos } from "../../hooks/useTodos";
 
 export default function StatsGrid() {
   const { todos } = useTodos();

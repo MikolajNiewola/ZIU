@@ -37,7 +37,7 @@ export function Step2({ onComplete, onBack, defaultValues }: Step2Props) {
 
   return (
     <form onSubmit={handleSubmit(onComplete)} noValidate>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-600 mb-4">
         Pola oznaczone <span className="text-red-500">*</span> są wymagane.
       </p>
 
@@ -99,7 +99,7 @@ export function Step2({ onComplete, onBack, defaultValues }: Step2Props) {
         <button
           type="button"
           onClick={() => append({ value: "" })}
-          className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
+          className="text-sm text-blue-700 hover:text-blue-900 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-2 py-1"
         >
           + Dodaj kategorię
         </button>

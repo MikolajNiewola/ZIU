@@ -21,9 +21,9 @@ const getPasswordStrength = (pwd: string): 'słabe' | 'średnie' | 'silne' => {
 };
 
 const strengthColor: Record<string, string> = {
-  'słabe': '#ef4444',
-  'średnie': '#f59e0b',
-  'silne': '#22c55e',
+  'słabe': '#b91c1c',
+  'średnie': '#c2410c',
+  'silne': '#15803d',
 };
 
 export function Step1({ onComplete, defaultValues }: Step1Props) {
@@ -51,7 +51,7 @@ export function Step1({ onComplete, defaultValues }: Step1Props) {
 
   return (
     <form onSubmit={handleSubmit(onComplete)} noValidate>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-600 mb-4">
         Pola oznaczone <span className="text-red-500">*</span> są wymagane.
       </p>
 

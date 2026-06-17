@@ -7,9 +7,10 @@ interface ModalDialogProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  hideFooter?: boolean;
 }
 
-export default function ModalDialog({ isOpen, onClose, title, children }: ModalDialogProps) {
+export default function ModalDialog({ isOpen, onClose, title, children, hideFooter }: ModalDialogProps) {
   const triggerRef = useRef<HTMLElement>(null);
 
   if (!isOpen) return null;
@@ -29,13 +30,13 @@ export default function ModalDialog({ isOpen, onClose, title, children }: ModalD
           onClick={(e) => e.stopPropagation()}
         >
           <header className="flex items-center justify-between mb-4">
-            <h2 id="modal-title" className="text-lg font-bold text-gray-800">
+            <p id="modal-title" className="text-lg font-bold text-gray-900 m-0">
               {title}
-            </h2>
+            </p>
             <button
               onClick={onClose}
               aria-label="Zamknij okno dialogowe"
-              className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -55,14 +56,16 @@ export default function ModalDialog({ isOpen, onClose, title, children }: ModalD
             </button>
           </header>
           <div>{children}</div>
+          {!hideFooter && (
           <footer className="mt-4 flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+              className="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2"
             >
               Zamknij
             </button>
           </footer>
+          )}
         </div>
       </FocusTrap>
     </div>

@@ -1,6 +1,7 @@
 import {
   Drawer,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -40,29 +41,30 @@ export default function Sidebar({
   const drawerContent = (
     <>
       <Toolbar>
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
           TodoApp
         </Typography>
       </Toolbar>
 
       <Divider sx={{ borderColor: "rgba(255,255,255,0.2)" }} />
 
-      <List>
+      <List component="ul" disablePadding>
         {navItems.map((item) => (
-          <ListItemButton
-            key={item.path}
-            selected={activePage === item.path}
-            onClick={() => {
-              onNavigate?.(item.path);
-              handleDrawerToggle();
-            }}
-            sx={{ "&.Mui-selected": { bgcolor: "rgba(255,255,255,0.15)" } }}
-          >
-            <ListItemIcon sx={{ color: "inherit" }}>
-              <item.icon />
-            </ListItemIcon>
-            <ListItemText primary={item.label} />
-          </ListItemButton>
+          <ListItem key={item.path} component="li" disablePadding>
+            <ListItemButton
+              selected={activePage === item.path}
+              onClick={() => {
+                onNavigate?.(item.path);
+                if (mobileOpen) handleDrawerToggle();
+              }}
+              sx={{ "&.Mui-selected": { bgcolor: "rgba(255,255,255,0.15)" } }}
+            >
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <item.icon />
+              </ListItemIcon>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
         ))}
       </List>
 

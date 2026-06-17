@@ -1,56 +1,83 @@
-import { useState } from "react";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
+import { addTodoSchema, type AddTodoData } from './form/todoSchemas';
+import { tapScale } from '../animations/variants';
 
-interface TodoInputProps {
-  onAdd: (text: string) => void;
+interface AddTodoFormProps {
+  onAdd: (text: string) => Promise<void>;
+  isLoading?: boolean;
 }
 
-export default function TodoInputTailwind({ onAdd }: TodoInputProps) {
-  const [text, setText] = useState("");
+export default function AddTodoForm({ onAdd, isLoading }: AddTodoFormProps) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<AddTodoData>({
+    resolver: zodResolver(addTodoSchema),
+    defaultValues: { title: '' },
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+  });
 
-  const handleSubmit = () => {
-    if (!text.trim()) return;
-    onAdd(text.trim());
-    setText("");
+  const onSubmit = async (data: AddTodoData) => {
+    await onAdd(data.title.trim());
+    reset();
   };
+
+  const busy = isLoading || isSubmitting;
 
   return (
     <form
-      role="search"
       aria-label="Dodaj nowe zadanie"
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
       className="mb-6"
     >
-      <h2 className="text-lg font-semibold text-gray-800 mb-2">
+      <h2 id="add-todo-heading" className="text-lg font-semibold text-gray-800 mb-2">
         Dodaj nowe zadanie
       </h2>
 
       <div className="flex gap-2">
-        <label htmlFor="new-task-input" className="visually-hidden">
-          Treść nowego zadania
-        </label>
-        <input
-          id="new-task-input"
-          type="text"
-          placeholder="Wpisz treść zadania..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          aria-required="true"
-          className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg
-                    focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-        />
+        <div className="flex-1">
+          <label htmlFor="new-task-input" className="visually-hidden">
+            Treść nowego zadania
+          </label>
+          <input
+            id="new-task-input"
+            type="text"
+            placeholder="Wpisz treść zadania..."
+            aria-required="true"
+            aria-invalid={!!errors.title}
+            aria-describedby={errors.title ? 'title-error' : undefined}
+            disabled={busy}
+            className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg
+                      focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+                      disabled:opacity-50"
+            {...register('title')}
+          />
+          {errors.title && (
+            <p id="title-error" role="alert" className="text-red-600 text-sm mt-1">
+              {errors.title.message}
+            </p>
+          )}
+        </div>
 
-        <button
-          type="submit"
-          disabled={!text.trim()}
-          aria-label="Dodaj zadanie"
-          className="px-5 py-2 text-sm font-semibold text-white bg-brand-500 rounded-lg
-                    hover:bg-brand-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          Dodaj
-        </button>
+        <motion.div whileTap={tapScale}>
+          <button
+            type="submit"
+            disabled={busy}
+            aria-label="Dodaj zadanie"
+            aria-busy={busy}
+            className="px-5 py-2 text-sm font-semibold text-white bg-brand-500 rounded-lg
+                      hover:bg-brand-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed
+                      focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+          >
+            {busy ? 'Dodawanie…' : 'Dodaj'}
+          </button>
+        </motion.div>
       </div>
     </form>
   );

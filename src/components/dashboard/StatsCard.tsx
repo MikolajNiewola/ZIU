@@ -32,7 +32,10 @@ export default function StatsCard({
               {title}
             </Typography>
 
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+            <Typography
+              component="p"
+              sx={{ fontWeight: 700, fontSize: "2.125rem", lineHeight: 1.2, m: 0 }}
+            >
               {value}
             </Typography>
           </Box>

@@ -6,9 +6,10 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 interface AppHeaderProps {
   handleDrawerToggle: () => void;
   drawerWidth: number;
+  pageTitle?: string;
 }
 
-export default function AppHeader({ handleDrawerToggle, drawerWidth }: AppHeaderProps) {
+export default function AppHeader({ handleDrawerToggle, drawerWidth, pageTitle = 'Dashboard' }: AppHeaderProps) {
   return (
     <AppBar
       position="fixed"
@@ -31,21 +32,9 @@ export default function AppHeader({ handleDrawerToggle, drawerWidth }: AppHeader
           <MenuIcon />
         </IconButton>
 
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
-          Dashboard
+        <Typography variant="h6" noWrap component="h1" sx={{ flexGrow: 1, fontWeight: 600 }}>
+          {pageTitle}
         </Typography>
-
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <IconButton aria-label="Zmień motyw" color="inherit">
-            <LightModeIcon />
-          </IconButton>
-          
-          <IconButton aria-label="Powiadomienia" color="inherit">
-            <Badge badgeContent={3} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-        </Box>
       </Toolbar>
     </AppBar>
   );

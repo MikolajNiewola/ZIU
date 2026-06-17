@@ -16,15 +16,15 @@ export default {
                     warning: '#E65100',
                     danger: '#B71C1C',
                 },
-                fontFamily: {
-                    sans: ['Inter', 'system-ui', 'sans-serif'],
-                },
-                borderRadius: {
-                    'xl': '1rem',
-                    '2xl': '1.5rem',
-                },
+            },
+            fontFamily: {
+                sans: ['Roboto', 'Inter', 'system-ui', 'sans-serif'],
+            },
+            borderRadius: {
+                xl: '1rem',
+                '2xl': '1.5rem',
             },
         },
-        plugins: [],
-    }
-}
+    },
+    plugins: [],
+};

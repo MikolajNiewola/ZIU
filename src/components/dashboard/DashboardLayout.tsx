@@ -10,9 +10,10 @@ interface DashboardLayoutProps {
   children?: React.ReactNode;
   onNavigate?: (page: string) => void;
   activePage?: string;
+  pageTitle?: string;
 }
 
-export default function DashboardLayout({ children, onNavigate, activePage }: DashboardLayoutProps) {
+export default function DashboardLayout({ children, onNavigate, activePage, pageTitle }: DashboardLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -40,7 +41,7 @@ export default function DashboardLayout({ children, onNavigate, activePage }: Da
           outline: "none",
         }}
       >
-        <AppHeader handleDrawerToggle={handleDrawerToggle} drawerWidth={DRAWER_WIDTH} />
+        <AppHeader handleDrawerToggle={handleDrawerToggle} drawerWidth={DRAWER_WIDTH} pageTitle={pageTitle} />
         <Toolbar />
         <section aria-label="Statystyki zadań">
           <StatsGrid />

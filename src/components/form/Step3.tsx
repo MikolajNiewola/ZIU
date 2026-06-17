@@ -34,13 +34,13 @@ export function Step3({ data, onSubmitAll, onBack, serverError }: Step3Props) {
           Dane osobowe
         </h3>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-          <dt className="text-gray-500">Imię:</dt>
+          <dt className="text-gray-600">Imię:</dt>
           <dd className="text-gray-800 font-medium">{step1?.firstName}</dd>
-          <dt className="text-gray-500">Nazwisko:</dt>
+          <dt className="text-gray-600">Nazwisko:</dt>
           <dd className="text-gray-800 font-medium">{step1?.lastName}</dd>
-          <dt className="text-gray-500">E-mail:</dt>
+          <dt className="text-gray-600">E-mail:</dt>
           <dd className="text-gray-800 font-medium">{step1?.email}</dd>
-          <dt className="text-gray-500">Hasło:</dt>
+          <dt className="text-gray-600">Hasło:</dt>
           <dd className="text-gray-800 font-medium">{'•'.repeat(8)}</dd>
         </dl>
       </div>
@@ -51,15 +51,15 @@ export function Step3({ data, onSubmitAll, onBack, serverError }: Step3Props) {
           Preferencje
         </h3>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-          <dt className="text-gray-500">Kategorie:</dt>
+          <dt className="text-gray-600">Kategorie:</dt>
           <dd className="text-gray-800 font-medium">
             {step2?.categories.map((c) => c.value).join(', ') || '—'}
           </dd>
-          <dt className="text-gray-500">E-mail notifications:</dt>
+          <dt className="text-gray-600">E-mail notifications:</dt>
           <dd className="text-gray-800 font-medium">{step2?.notifications.email ? 'Tak' : 'Nie'}</dd>
-          <dt className="text-gray-500">Push notifications:</dt>
+          <dt className="text-gray-600">Push notifications:</dt>
           <dd className="text-gray-800 font-medium">{step2?.notifications.push ? 'Tak' : 'Nie'}</dd>
-          <dt className="text-gray-500">Newsletter:</dt>
+          <dt className="text-gray-600">Newsletter:</dt>
           <dd className="text-gray-800 font-medium">{step2?.newsletter ? 'Tak' : 'Nie'}</dd>
         </dl>
       </div>

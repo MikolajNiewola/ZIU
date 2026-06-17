@@ -2,13 +2,25 @@ export interface Todo {
   id: string;
   title: string;
   completed: boolean;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export type FilterType = 'all' | 'active' | 'completed';
 
+export type AsyncStatus = 'idle' | 'loading' | 'success' | 'error';
+
 export type TodoAction =
-  | { type: 'ADD'; payload: string }
-  | { type: 'TOGGLE'; payload: string }
+  | { type: 'SET_TODOS'; payload: Todo[] }
+  | { type: 'ADD'; payload: Todo }
+  | { type: 'TOGGLE'; payload: Todo }
   | { type: 'DELETE'; payload: string }
-  | { type: 'EDIT'; payload: { id: string; title: string } };
+  | { type: 'EDIT'; payload: Todo };
+
+export type LastAction =
+  | 'fetch'
+  | 'add'
+  | 'toggle'
+  | 'edit'
+  | 'delete'
+  | 'clear'
+  | null;

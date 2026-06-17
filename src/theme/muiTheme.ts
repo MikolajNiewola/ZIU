@@ -23,6 +23,10 @@ const muiTheme = createTheme({
             default: '#F5F7FA',
             paper: '#FFFFFF',
         },
+        text: {
+            primary: '#1a1a1a',
+            secondary: '#4b5563',
+        },
     },
     typography: {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
