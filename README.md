@@ -69,8 +69,6 @@ npm run preview
 - **Rozpoznawalność** (heurystyka #6) — ikony MUI, czytelne etykiety filtrów
 - **Elastyczność** — responsywny drawer (mobile) / sidebar (desktop)
 
-Szczegółowe omówienie narzędzi i implementacji: [PODSUMOWANIE.md](./PODSUMOWANIE.md)
-
 ## Autor
 
 **Mikołaj Niewola**  
